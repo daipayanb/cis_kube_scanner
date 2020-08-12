@@ -1,1 +1,6 @@
 /outputs
+job-eks.yaml
+job-gke.yaml
+job-iks.yaml
+job-node_DaemonSet.yaml.template
+.gitignore
