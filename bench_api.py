@@ -19,10 +19,11 @@ def apply_yaml():
         #Load the yaml file
         daemon = yaml.safe_load(yaml_file)
         #Editing the load yaml file with the unique names
-        kube_bench_node_name = daemon['metadata']['name'] + "-" + unq
-        daemon['metadata']['name'] = kube_bench_node_name
-        daemon['spec']['selector']['matchLabels']['name'] = kube_bench_node_name
-        daemon['spec']['template']['metadata']['labels']['name'] = kube_bench_node_name
+        global KUBE_BENCH_NODE_NAME
+        KUBE_BENCH_NODE_NAME = daemon['metadata']['name'] + "-" + unq
+        daemon['metadata']['name'] = KUBE_BENCH_NODE_NAME
+        daemon['spec']['selector']['matchLabels']['name'] = KUBE_BENCH_NODE_NAME
+        daemon['spec']['template']['metadata']['labels']['name'] = KUBE_BENCH_NODE_NAME
         apply_resp = client.AppsV1Api().create_namespaced_daemon_set(body=daemon, \
             namespace="default")
         print("DaemonSet created. Daemon-Set name='%s'" % apply_resp.metadata.name)
@@ -46,7 +47,8 @@ def write_logs(node_name, logs):
 
 def node_pod(pod_name):
     """Get Node in which a pod is running"""
-    ret = client.CoreV1Api().list_pod_for_all_namespaces(watch=False)
+    ret = client.CoreV1Api().list_pod_for_all_namespaces(watch=False, \
+        label_selector='name='+KUBE_BENCH_NODE_NAME)
     for i in ret.items:
         if pod_name == i.metadata.name:
             return i.spec.node_name
@@ -54,9 +56,11 @@ def node_pod(pod_name):
 
 def get_pod_list(pods_name):
     """Returns a dictionary with keys= Pod names and value= whether logs of pods are available"""
-    ret = client.CoreV1Api().list_pod_for_all_namespaces(watch=False)
+    ret = client.CoreV1Api().list_pod_for_all_namespaces(watch=False, \
+        label_selector='name='+KUBE_BENCH_NODE_NAME)
+    print(KUBE_BENCH_NODE_NAME)
     pod_log_status = {}
-    print(len(ret.items))
+    #print(len(ret.items))
     for i in ret.items:
         if pods_name in i.metadata.name:
             pod_log_status[i.metadata.name] = "LogsNotChecked"
@@ -74,7 +78,9 @@ def check_logs_ready(pod_log_status, pods_name):
         # if not flag stays false and the retry block is exitted.
         update = False
         sleep(time)
-        ret = client.CoreV1Api().list_pod_for_all_namespaces(watch=False)
+        ret = client.CoreV1Api().list_pod_for_all_namespaces(watch=False, \
+        label_selector='name='+KUBE_BENCH_NODE_NAME)
+        #print(len(ret.items))
         for i in ret.items:
             #print(i.metadata.name)
             if pods_name in i.metadata.name and pod_log_status[i.metadata.name] != "LogsReady":
