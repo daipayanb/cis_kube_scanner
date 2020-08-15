@@ -15,8 +15,8 @@ spec:
       hostPID: true
       containers:
         - name: kube-bench
-          image: aquasec/kube-bench:latest
-          command: ["kube-bench", "node", "--json"]
+          image: daipayan95/test-kube:latest
+          #command: ["kube-bench", "node", "--json"]
           volumeMounts:
             - name: var-lib-kubelet
               mountPath: /var/lib/kubelet
