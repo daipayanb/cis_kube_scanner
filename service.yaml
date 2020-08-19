@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-bench-service
+  labels:
+    app: python-kube_bench
+spec:
+  type: ClusterIP
+  clusterIP: 10.15.242.224
+  ports:
+  - port: 8080
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: python-kube_bench

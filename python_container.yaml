@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-deployment
+  labels:
+    app: python-kube_bench
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python-kube_bench
+  template:
+    metadata:
+      labels:
+        app: python-kube_bench
+    spec:
+      containers:
+      - name: python-cont
+        image: daipayan95/python-cont:latest
+        command: ["/bin/sh"]
