@@ -1,4 +1,4 @@
-# kube-bench_distributed
+# kube-bench_automation
 
 This is a project that automates all the scans and checks implemented in [aquasecurity/kube-bench](https://github.com/aquasecurity/kube-bench) for all the nodes in a cluster and collects the scan results from all the nodes.
 
