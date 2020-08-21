@@ -1,4 +1,6 @@
 /outputs
+.vscode/
+python-container/__pycache__/
 job-eks.yaml
 job-gke.yaml
 job-iks.yaml
