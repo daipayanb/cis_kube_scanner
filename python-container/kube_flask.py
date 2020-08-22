@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, request
 from bench_api import apply_yaml, delete_apply
 app = Flask(__name__)
 
@@ -20,7 +20,12 @@ def start():
 def end():
     delete_apply(POD_NAME)
     return redirect("http://localhost:8000/", code=302)
+
+@app.route('/data', methods = ['POST'])
+def data():
+    print(request.json)
+    return request.json
     
 
 if __name__ == '__main__':
-    app.run(port=80)
+    app.run(host="0.0.0.0", port=80)

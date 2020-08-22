@@ -7,4 +7,4 @@ echo "Scan results"
 echo $scan_results >> scan.json
 cat scan.json
 echo "Scan results"
-curl -X POST -H "Content-Type: application/json" -d "$scan_results" http://104.154.254.6/data
+curl -X POST -H "Content-Type: application/json" -d "$scan_results" http://kube-bench-service.default.svc.cluster.local:8080/data
