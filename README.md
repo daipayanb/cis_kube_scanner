@@ -1,6 +1,8 @@
 # kube-bench_automation
 
-This is a project that automates all the scans and checks implemented in [aquasecurity/kube-bench](https://github.com/aquasecurity/kube-bench) for all the nodes in a cluster and collects the scan results from all the nodes.
+Our objective is to perform the CIS Benchmark audit of Kubernetes at scale.
+
+This is achieved by using the scans and checks implemented in [aquasecurity/kube-bench](https://github.com/aquasecurity/kube-bench).
 
 For now, the implementation supports the kube-bench scan for worker nodes only. The project makes use of `DaemonSet` to run the pods in all the nodes of a cluster. The DaemonSet YAML file is [job-node_DaemonSet.yaml](https://github.com/daipayanb/kube-bench_distributed/blob/master/job-node_DaemonSet.yaml) and is based on the original [job-node.yaml](https://github.com/daipayanb/kube-bench_distributed/blob/master/job-node.yaml)
 
