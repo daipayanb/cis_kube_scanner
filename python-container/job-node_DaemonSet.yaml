@@ -18,6 +18,11 @@ spec:
           #image: aquasec/kube-bench:latest
           image: daipayan95/test-kube:latest
           #command: ["kube-bench", "node", "--json"]
+          env:
+            - name: MY_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           volumeMounts:
             - name: var-lib-kubelet
               mountPath: /var/lib/kubelet

@@ -46,4 +46,6 @@ spec:
   - name: python-cont
     image: daipayan95/python-cont:latest
     #command: ["sleep", "120"]
+    
+{"fruit": "Apple","size": "Large","color": "Red"}
 """
