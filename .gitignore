@@ -5,4 +5,7 @@ job-eks.yaml
 job-gke.yaml
 job-iks.yaml
 job-node_DaemonSet.yaml.template
+rejson.Linux-x86_64.1.0.4.zip
+rejson.Linux-x86_64.1.0.4/
+dump.rdb
 .gitignore

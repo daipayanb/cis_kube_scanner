@@ -1,0 +1,262 @@
+{
+    "architecture": "x86_64", 
+    "author": "Redis Labs", 
+    "capabilities": [
+        "types", 
+        "no_multi_key", 
+        "replica_of", 
+        "eviction_expiry", 
+        "failover_migrate", 
+        "flash", 
+        "backup_restore", 
+        "reshard_rebalance", 
+        "persistence_aof", 
+        "persistence_rdb", 
+        "hash_policy", 
+        "clustering"
+    ], 
+    "command_line_args": "", 
+    "commands": [
+        {
+            "command_arity": -1, 
+            "command_name": "json.arrlen", 
+            "first_key": 1, 
+            "flags": [
+                "readonly"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.forget", 
+            "first_key": 1, 
+            "flags": [
+                "write"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.arrpop", 
+            "first_key": 1, 
+            "flags": [
+                "write"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.mget", 
+            "first_key": 1, 
+            "flags": [
+                "readonly", 
+                "movablekeys"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.numincrby", 
+            "first_key": 1, 
+            "flags": [
+                "write"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.debug", 
+            "first_key": 1, 
+            "flags": [
+                "readonly", 
+                "movablekeys"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.set", 
+            "first_key": 1, 
+            "flags": [
+                "write", 
+                "denyoom"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.objlen", 
+            "first_key": 1, 
+            "flags": [
+                "readonly"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.arrindex", 
+            "first_key": 1, 
+            "flags": [
+                "readonly"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.type", 
+            "first_key": 1, 
+            "flags": [
+                "readonly"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.get", 
+            "first_key": 1, 
+            "flags": [
+                "readonly"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.arrinsert", 
+            "first_key": 1, 
+            "flags": [
+                "write", 
+                "denyoom"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.strlen", 
+            "first_key": 1, 
+            "flags": [
+                "readonly"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.arrtrim", 
+            "first_key": 1, 
+            "flags": [
+                "write"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.nummultby", 
+            "first_key": 1, 
+            "flags": [
+                "write"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.del", 
+            "first_key": 1, 
+            "flags": [
+                "write"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json._cacheinfo", 
+            "first_key": 1, 
+            "flags": [
+                "readonly"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.objkeys", 
+            "first_key": 1, 
+            "flags": [
+                "readonly"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.arrappend", 
+            "first_key": 1, 
+            "flags": [
+                "write", 
+                "denyoom"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.resp", 
+            "first_key": 1, 
+            "flags": [
+                "readonly"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json.strappend", 
+            "first_key": 1, 
+            "flags": [
+                "write", 
+                "denyoom"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }, 
+        {
+            "command_arity": -1, 
+            "command_name": "json._cacheinit", 
+            "first_key": 1, 
+            "flags": [
+                "write"
+            ], 
+            "last_key": 1, 
+            "step": 1
+        }
+    ], 
+    "config_command": "", 
+    "description": "Native JSON Data Type for Redis", 
+    "display_name": "RedisJSON", 
+    "email": "redismodules@redislabs.com", 
+    "homepage": "http://redisjson.io", 
+    "license": "Redis Source Available License Agreement", 
+    "min_redis_pack_version": "5.0", 
+    "min_redis_version": "4.0", 
+    "module_file": "rejson.so", 
+    "module_name": "ReJSON", 
+    "os": "Linux", 
+    "ramp_format_version": 1, 
+    "semantic_version": "1.0.4", 
+    "sha256": "1fc77c09180fbd25bd1482ea9a6826009d9cd5e1dc0a999260ebe426fd06d19f", 
+    "version": 10004.0
+}
