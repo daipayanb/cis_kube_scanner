@@ -1,30 +1,13 @@
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, flash
 from bench_api import apply_yaml, delete_apply
+from time import sleep
 import redis
 import json
 from json2html import *
-#from rejson import Client, Path
 
-#rj = Client(host='localhost', port=6379, decode_responses=True)
 r = redis.StrictRedis()
 
 app = Flask(__name__)
-"""
-def get_tests(test_data):
-    final_test_dict = {}
-    for xdict in test_data:
-        test_data = {}
-        test_data["section"] = xdict["section"]
-        test_data["pass"] = xdict["pass"]
-        test_data["fail"] = xdict["fail"]
-        test_data["warn"] = xdict["warn"]
-        test_data["info"] = xdict["info"]
-        test_data["desc"] = xdict["desc"]
-        results_dict = {}
-        for rdict in xdict["results"]:
-            if rdict["status"] != "PASS":
-                results_dict[rdict["test_number"]+rdict["status"]] = rdict[""]
-"""
 
 def retrieve_data(json_data):
     data_dict = {}
@@ -42,15 +25,6 @@ def get_tests(tests):
     results_dict["Test Number"] = "Test Description"
     for tdict in tests:
         for rdict in tdict["results"]:
-            """
-            data = ""
-            data += "Status: " + rdict["status"] + " || "
-            data += "Test Description: " + rdict["test_desc"] + " || "
-            data += "Audit: " + rdict["audit"] + " || "
-            data += "AuditConfig: " + rdict["AuditConfig"] + " || "
-            data += "Type: " + rdict["type"] + " || "
-            data += "Remediation: " + rdict["remediation"] + " || "
-            """
             data = []
             data.append("Status: " + rdict["status"])
             data.append("Test Description: " + rdict["test_desc"])
@@ -74,6 +48,15 @@ def hello_world():
 def start():
     global POD_NAME
     POD_NAME = apply_yaml()
+    global NODE_DICT
+    NODE_DICT = {}
+    flash("Scan is now running!")
+    #render_template("running.html")
+    sleep(60)
+    delete_apply(POD_NAME)
+    flash("Scan has completed. Check Scan Results")
+    #render_template("completed.html")
+    sleep(2)
     return redirect("http://localhost:8000/", code=302)
 
 
@@ -87,22 +70,38 @@ def posted():
     data = request.json[0]
     nodename = data['nodename']
     print(nodename)
+    NODE_DICT[nodename] = True
     #r = redis.Redis(host='localhost', port=6379, db=0)
     r.execute_command('JSON.SET', nodename, '.', json.dumps(data))
-    #rj.jsonset(nodename, Path.rootPath(), data)
-    print(json.loads(r.execute_command('JSON.GET', nodename)))
-    json_node, json_data = retrieve_data(data)
-    node_table = json2html.convert(json = json_node)
-    test_table = json2html.convert(json = json_data)
-    #json2html.convert()
-    f = open('templates/results.html','w')
-    html_file = "<html><head></head><body><p>" + node_table + '<br>' + test_table + "</p></body></html>"
-    f.write(html_file)
-    f.close()
-    #print(rj.jsonget(nodename))
-    #print(json.dumps(request.json[0]))
-    #print()
     return "OK"
 
+def generate_html():
+    node_list = NODE_DICT.keys()
+    section_html = ""
+    for node in node_list:
+        json_data = json.loads(r.execute_command('JSON.GET', node))
+        node_data, test_data = retrieve_data(json_data)
+        node_table = json2html.convert(json = node_data)
+        test_table = json2html.convert(json = test_data)
+        section_html += node_table + '<br>' + test_table + '<br>'
+    header_string = "<h1><center><b> Welcome to kube-bench_automation v0.1! </b></center></h1>"
+    scan_string = "<h2><center><b> Scan Results Ready! </b></center></h2><br>"
+    html_string = "<html><head>" + header_string + scan_string +"</head><body><p>" + section_html + "</p></body></html>"
+    return html_string
+
+
+
+@app.route('/show_scans', methods = ['POST'])
+def show_scans():
+    for items in NODE_DICT:
+        print(items+"\n")
+        #print(json.loads(r.execute_command('JSON.GET', items)))
+    html_string = generate_html()
+    f = open('templates/results.html','w')
+    f.write(html_string)
+    f.close()
+    return render_template("results.html")
+
+
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8000)
+    app.run(host="0.0.0.0", port=80)

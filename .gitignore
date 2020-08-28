@@ -10,3 +10,5 @@ rejson.Linux-x86_64.1.0.4/
 dump.rdb
 python-container/templates/results.html
 .gitignore
+templates/completed.html
+templates/running.html

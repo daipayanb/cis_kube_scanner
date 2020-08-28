@@ -4,7 +4,7 @@
 
 FROM python:3.7.9-alpine3.12
 
-RUN pip install pyyaml && pip install kubernetes && pip install flask && pip install rejson
+RUN pip install pyyaml && pip install kubernetes && pip install flask && pip install rejson && pip install json2html
 RUN apk add --no-cache redis
 
 COPY job-node_DaemonSet.yaml .
