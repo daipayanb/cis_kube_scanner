@@ -42,7 +42,11 @@ def get_tests(tests):
             results_dict[rdict["test_number"]] = data
             #print(rdict["test_number"])
             #results_dict["test_number"]
-    return results_dict
+    """
+    sort_dict = sorted(results_dict.item(), key=lambda x: x[1][0], reverse=True)
+    print(sort_dict)
+    return sort_dict"""
+    return(results_dict)
 
 
 @app.route('/')
@@ -101,15 +105,18 @@ def generate_html():
     global NODE_DICT
     node_list = NODE_DICT.keys()
     section_html = ""
+    section_links = "<h3>Following Nodes were scanned: </h3><br>"
     for node in node_list:
         json_data = json.loads(r.execute_command('JSON.GET', node))
         node_data, test_data = retrieve_data(json_data)
         node_table = json2html.convert(json = node_data)
         test_table = json2html.convert(json = test_data)
-        section_html += node_table + '<br>' + test_table + '<br>'
-    header_string = "<h1><center><b> Welcome to kube-bench_automation v0.1! </b></center></h1>"
+        section_links += '<a href="#' + node + '">' + node + '</a><br>'
+        node_sections = '<p id="' + node + '">' + "Test results for: " + node + '</p><br>'
+        section_html += node_sections + node_table + '<br>' + test_table + '<br>'
+    header_string = "<h1><center><b> Welcome to CIS Kubernetes Benchmark Scanner v0.1! </b></center></h1>"
     scan_string = "<h2><center><b> Scan Results Ready! </b></center></h2><br>"
-    html_string = "<html><head>" + header_string + scan_string +"</head><body><p>" + section_html + "</p></body></html>"
+    html_string = "<html><head>" + header_string + scan_string + section_links + "</head><body><p>" + section_html + "</p></body></html>"
     return html_string
 
 
