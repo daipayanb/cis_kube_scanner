@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, request, flash
 from bench_api import apply_yaml, delete_apply
 from time import sleep
+from os import urandom
 import redis
 import json
 from json2html import *
@@ -8,6 +9,10 @@ from json2html import *
 r = redis.StrictRedis()
 
 app = Flask(__name__)
+app.secret_key = urandom(24)
+
+SCANNING = False
+SCAN_COMPLETED = False
 
 def retrieve_data(json_data):
     data_dict = {}
@@ -46,23 +51,38 @@ def hello_world():
 
 @app.route('/button_start', methods = ['POST'])
 def start():
+    global SCANNING
+    if SCANNING:
+        flash("Scan is already running. Please wait.")
+        return redirect("http://localhost:8000/", code=302)
+    SCANNING = True
     global POD_NAME
     POD_NAME = apply_yaml()
     global NODE_DICT
     NODE_DICT = {}
-    flash("Scan is now running!")
+    #flash("Scan is now running!")
     #render_template("running.html")
     sleep(60)
     delete_apply(POD_NAME)
     flash("Scan has completed. Check Scan Results")
     #render_template("completed.html")
     sleep(2)
+    SCANNING = False
+    global SCAN_COMPLETED
+    SCAN_COMPLETED = True
     return redirect("http://localhost:8000/", code=302)
+    
 
 
 @app.route('/button_end', methods = ['POST'])
 def end():
+    global SCAN_COMPLETED
+    global SCANNING
+    if not SCAN_COMPLETED and not SCANNING :
+        flash("No scans running.")
+        return redirect("http://localhost:8000/", code=302)
     delete_apply(POD_NAME)
+    SCANNING = False
     return redirect("http://localhost:8000/", code=302)
 
 @app.route('/data', methods = ['POST'])
@@ -93,6 +113,15 @@ def generate_html():
 
 @app.route('/show_scans', methods = ['POST'])
 def show_scans():
+    global SCANNING
+    if SCANNING:
+        flash("Scan not yet completed. Please wait.")
+        return redirect("http://localhost:8000/", code=302)
+    
+    if not SCAN_COMPLETED:
+        flash("No scans have been run yet.")
+        return redirect("http://localhost:8000/", code=302)
+
     for items in NODE_DICT:
         print(items+"\n")
         #print(json.loads(r.execute_command('JSON.GET', items)))
