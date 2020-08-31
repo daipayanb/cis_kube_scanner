@@ -9,6 +9,7 @@ from json2html import *
 r = redis.StrictRedis()
 
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.secret_key = urandom(24)
 
 SCANNING = False
@@ -95,7 +96,9 @@ def posted():
     r.execute_command('JSON.SET', nodename, '.', json.dumps(data))
     return "OK"
 
+
 def generate_html():
+    global NODE_DICT
     node_list = NODE_DICT.keys()
     section_html = ""
     for node in node_list:
@@ -108,7 +111,6 @@ def generate_html():
     scan_string = "<h2><center><b> Scan Results Ready! </b></center></h2><br>"
     html_string = "<html><head>" + header_string + scan_string +"</head><body><p>" + section_html + "</p></body></html>"
     return html_string
-
 
 
 @app.route('/show_scans', methods = ['POST'])
