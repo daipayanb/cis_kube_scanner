@@ -1,7 +1,8 @@
-from flask import Flask, render_template, redirect, request, flash
+from flask import Flask, render_template, redirect, request, flash, send_file
 from bench_api import apply_yaml, delete_apply
 from time import sleep
 from os import urandom
+from pdfkit import from_file
 import redis
 import json
 from json2html import *
@@ -26,26 +27,29 @@ def retrieve_data(json_data):
     print(data_dict)
     return data_dict, get_tests(json_data["tests"])
 
+def get_data(tests, status, results_dict):
+    for tdict in tests:
+        for rdict in tdict["results"]:
+            if rdict["status"] == status:
+                data = []
+                data.append("Status: " + rdict["status"])
+                data.append("Test Description: " + rdict["test_desc"])
+                data.append("Audit: " + rdict["audit"])
+                data.append("AuditConfig: " + rdict["AuditConfig"])
+                data.append("Type: " + rdict["type"])
+                data.append("Remediation: " + rdict["remediation"])
+                #print(data)
+                results_dict[rdict["test_number"]] = data 
+                #print(rdict["test_number"])
+                #results_dict["test_number"]
+    return results_dict
+
 def get_tests(tests):
     results_dict = {}
     results_dict["Test Number"] = "Test Description"
-    for tdict in tests:
-        for rdict in tdict["results"]:
-            data = []
-            data.append("Status: " + rdict["status"])
-            data.append("Test Description: " + rdict["test_desc"])
-            data.append("Audit: " + rdict["audit"])
-            data.append("AuditConfig: " + rdict["AuditConfig"])
-            data.append("Type: " + rdict["type"])
-            data.append("Remediation: " + rdict["remediation"])
-            #print(data)
-            results_dict[rdict["test_number"]] = data
-            #print(rdict["test_number"])
-            #results_dict["test_number"]
-    """
-    sort_dict = sorted(results_dict.item(), key=lambda x: x[1][0], reverse=True)
-    print(sort_dict)
-    return sort_dict"""
+    results_dict = get_data(tests, "FAIL", results_dict)
+    results_dict = get_data(tests, "WARN", results_dict)
+    results_dict = get_data(tests, "PASS", results_dict)
     return(results_dict)
 
 
@@ -138,7 +142,13 @@ def show_scans():
     f = open('templates/results.html','w')
     f.write(html_string)
     f.close()
+    #from_file('templates/results.html','results.pdf')
     return render_template("results.html")
+
+@app.route('/download', methods = ['POST'])
+def download_file():
+    path = "templates/results.pdf"
+    return send_file(path, as_attachment=True)
 
 
 if __name__ == '__main__':

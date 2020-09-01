@@ -4,8 +4,9 @@
 
 FROM python:3.7.9-alpine3.12
 
-RUN pip install pyyaml && pip install kubernetes && pip install flask && pip install rejson && pip install json2html
+RUN pip install pyyaml && pip install kubernetes && pip install flask && pip install rejson && pip install json2html && pip install pdfkit
 RUN apk add --no-cache redis
+#RUN apk add --no-cache wkhtmltopdf
 
 COPY job-node_DaemonSet.yaml .
 COPY bench_api.py .
