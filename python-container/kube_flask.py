@@ -1,11 +1,12 @@
 """CIS Kubernetes Benchmark Scanner"""
-from time import sleep
-from os import urandom
 import json
-from flask import Flask, render_template, redirect, request, flash, send_file
-from pdfkit import from_file
+from os import urandom
+from time import sleep
+
+from json2html import *
 import redis
-from json2html import convert
+from flask import Flask, flash, redirect, render_template, request, send_file
+
 from bench_api import apply_yaml, delete_apply
 
 #Initiate Redis Connection
@@ -64,7 +65,7 @@ def get_tests(tests):
     """Creates a dictionary of the test results sorted by the STATUS\
         FAIL > WARN > PASS"""
     results_dict = {}
-    results_dict["Test Number"] = "Test Description"
+    results_dict["Test Number"] = "Test Description\n"
     results_dict = get_data(tests, "FAIL", results_dict)
     results_dict = get_data(tests, "WARN", results_dict)
     results_dict = get_data(tests, "PASS", results_dict)
@@ -150,22 +151,40 @@ def generate_html():
         #Get dictionaries parsed from the JSON Data
         node_data, test_data = retrieve_data(json_data)
         #Convert the basic scan data to an HTML Table
-        node_table = convert(json=node_data)
+        node_table = json2html.convert(json=node_data)
         #Convert the complete Test scan data to an HTML Table
-        test_table = convert(json=test_data)
+        test_table = json2html.convert(json=test_data)
         #Links to the sections of scan results for each node
         section_links += '<a href="#' + node + '">' + node + '</a><br>'
         node_sections = '<p id="' + node + '">' + "Test results for: " + node + '</p><br>'
         #HTML Tables for each node
-        section_html += node_sections + node_table + '<br>' + test_table + '<br>'
+        section_html += node_sections + node_table + '\n<br>' + test_table + '<br>'
     header_string = "<h1><center><b> \
         Welcome to CIS Kubernetes Benchmark Scanner v0.1! </b></center></h1>"
     scan_string = "<h2><center><b> Scan Results Ready! </b></center></h2><br>"
     #Concatenating all the parts into the final HTML String
     html_string = "<html><head>" + header_string + scan_string + section_links + \
-        "</head><body><p>" + section_html + "</p></body></html>"
+        "</head><body><div style=\"width:960px;word-wrap: break-word;\"><p>" + section_html + "</p></div></body></html>"
     return html_string
 
+
+def color_code():
+    """Color code the rows of the test results as per PASS/WARN/FAIL"""
+    results_file = open('templates/results.html', 'r')
+    new_html_string = ""
+    for line in results_file:
+        if "PASS" in line:
+            print(line.replace("<td>","<td style=\"background-color:#00FF00\">"))
+            new_html_string += line.replace("<td>","<td style=\"background-color:#00FF00\">")
+        elif "FAIL" in line:
+            print(line.replace("<td>","<td style=\"background-color:#FF4500\">"))
+            new_html_string += line.replace("<td>","<td style=\"background-color:#FF4500\">")
+        elif "WARN" in line:
+            print(line.replace("<td>","<td style=\"background-color:#FFFF00\">"))
+            new_html_string += line.replace("<td>","<td style=\"background-color:#FFFF00\">")
+        else:
+            new_html_string += line
+    return new_html_string
 
 @app.route('/show_scans', methods=['POST'])
 def show_scans():
@@ -189,8 +208,12 @@ def show_scans():
     results_file = open('templates/results.html', 'w')
     results_file.write(html_string)
     results_file.close()
+    new_html_string = color_code()
+    results_file = open('templates/new_results.html', 'w')
+    results_file.write(new_html_string)
+    results_file.close()
     #from_file('templates/results.html','results.pdf')
-    return render_template("results.html")
+    return render_template("new_results.html")
 
 """
 @app.route('/download', methods=['POST'])

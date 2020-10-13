@@ -6,7 +6,7 @@ metadata:
     app: python-kube_bench
 spec:
   type: ClusterIP
-  clusterIP: 10.15.242.224
+  clusterIP: 10.3.240.224
   ports:
   - port: 8080
     targetPort: 80
