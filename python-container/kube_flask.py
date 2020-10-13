@@ -2,6 +2,7 @@
 import json
 from os import urandom,system
 from time import sleep
+import re
 
 from json2html import *
 import redis
@@ -43,6 +44,10 @@ def retrieve_data(json_data):
     #and one containing actual test results
     return data_dict, get_tests(json_data["tests"])
 
+def fix_length(data_string):
+    """Insert newline character after every"""
+    return re.sub("(.{130})", "\\1\n", data_string, 0, re.DOTALL)
+
 def get_data(tests, status, results_dict):
     """Parses the JSON Test data and creates a Dictionary """
     #There may be multiple test sections. Such as id=4 == Worker Node
@@ -55,11 +60,11 @@ def get_data(tests, status, results_dict):
             if rdict["status"] == status:
                 data = []
                 data.append("Status: " + rdict["status"])
-                data.append("Test Description: " + rdict["test_desc"])
-                data.append("Audit: " + rdict["audit"])
-                data.append("AuditConfig: " + rdict["AuditConfig"])
-                data.append("Type: " + rdict["type"])
-                data.append("Remediation: " + rdict["remediation"])
+                data.append("Test Description: " + fix_length(rdict["test_desc"]))
+                data.append("Audit: " + fix_length(rdict["audit"]))
+                data.append("AuditConfig: " + fix_length(rdict["AuditConfig"]))
+                data.append("Type: " + fix_length(rdict["type"]))
+                data.append("Remediation: " + fix_length(rdict["remediation"]))
                 results_dict[rdict["test_number"]] = data
     return results_dict
 
@@ -118,13 +123,14 @@ def end():
     global SCAN_COMPLETED
     global SCANNING
     #Making sure that there is an actually running active scan
-    if not SCAN_COMPLETED and not SCANNING:
+    if not SCANNING:
         flash("No scans running.")
         return redirect("http://localhost:8000/", code=302)
     #Using bench_api.py's delete_apply() will delete the DaemonSet
     delete_apply(POD_NAME)
     #Indicate no active scans running
     SCANNING = False
+    flash("Scan has been stopped.")
     return redirect("http://localhost:8000/", code=302)
 
 @app.route('/data', methods=['POST'])
