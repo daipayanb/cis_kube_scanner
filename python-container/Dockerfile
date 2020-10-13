@@ -15,4 +15,4 @@ COPY /templates /templates
 COPY rejson.so rejson.so
 COPY module.json module.json
 
-CMD ["/bin/sh"]
+CMD ["python","kube_flask.py"]

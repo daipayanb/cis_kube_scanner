@@ -1,6 +1,6 @@
 """CIS Kubernetes Benchmark Scanner"""
 import json
-from os import urandom
+from os import urandom,system
 from time import sleep
 
 from json2html import *
@@ -9,6 +9,8 @@ from flask import Flask, flash, redirect, render_template, request, send_file
 
 from bench_api import apply_yaml, delete_apply
 
+#start a daemonized redis-server with the rejson module
+system('redis-server --daemonize yes --loadmodule ./rejson.so')
 #Initiate Redis Connection
 r = redis.StrictRedis()
 
